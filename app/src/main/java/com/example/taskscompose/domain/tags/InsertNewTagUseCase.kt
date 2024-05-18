@@ -1,5 +1,6 @@
-package com.example.taskscompose.domain.tasks
+package com.example.taskscompose.domain.tags
 
+import com.example.taskscompose.data.entity.Tags
 import com.example.taskscompose.data.entity.Task
 import com.example.taskscompose.data.repository.TasksRepository
 import dagger.Reusable
@@ -7,8 +8,8 @@ import javax.inject.Inject
 
 
 @Reusable
-class InsertNewTaskUseCase @Inject constructor(
+class InsertNewTagUseCase @Inject constructor(
     private val taskRepository: TasksRepository
 ) {
-    suspend operator fun invoke(task: Task) = taskRepository.insertTask(task)
+    suspend operator fun invoke(tag: Tags) = taskRepository.insertTag(tag)
 }

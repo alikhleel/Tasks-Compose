@@ -57,7 +57,6 @@ fun BottomBar(
                                 .clickable {
                                     navigationSelected.intValue = index
                                     navController.navigate(bottomNavigationItem.route) {
-                                        popUpToTop(navController)
                                         launchSingleTop = true
                                         restoreState = true
                                     }

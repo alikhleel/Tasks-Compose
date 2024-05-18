@@ -15,8 +15,10 @@ data class Tags(
 )
 
 data class TaskWithTagList(
-    @Embedded val tag: Tags, @Relation(
-        parentColumn = "tag_name", entityColumn = "task_tag_name"
+    @Embedded val tag: Tags,
+    @Relation(
+        parentColumn = "tag_name",
+        entityColumn = "task_tag_name"
     ) var tasks: List<Task>
 )
 

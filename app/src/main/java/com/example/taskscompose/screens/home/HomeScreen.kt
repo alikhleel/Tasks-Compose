@@ -2,6 +2,7 @@ package com.example.taskscompose.screens.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -75,7 +76,9 @@ fun HomeScreen(
 
 
 @Composable
-private fun TaskCard(modifier: Modifier = Modifier) {
+private fun TaskCard(
+    modifier: Modifier = Modifier
+) {
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -87,27 +90,40 @@ private fun TaskCard(modifier: Modifier = Modifier) {
             containerColor = Color.White
         )
     ) {
-        Row(
-            modifier = Modifier.padding(8.dp)
-        ) {
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.splash_logo),
-                    contentDescription = "check circle",
-                    contentScale = ContentScale.Inside
-                )
-                Text("Title")
-                Text("n Task")
-            }
-            IconButton(onClick = { /*TODO*/ }) {
-                Icon(
-                    Icons.Default.ArrowForward,
-                    contentDescription = "check circle",
-                    tint = Color.Gray
-                )
 
+        Box() {
+            Row(
+                modifier = Modifier.padding(8.dp)
+            ) {
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.splash_logo),
+                        contentDescription = "check circle",
+                        contentScale = ContentScale.Inside
+                    )
+                    Text(
+                        "Title",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 32.sp,
+                        color = PrimaryColor
+                    )
+                    Text(
+                        "n Task",
+                        color = PrimaryColor,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Light,
+                    )
+                }
+                IconButton(onClick = { /*TODO*/ }) {
+                    Icon(
+                        Icons.Default.ArrowForward,
+                        contentDescription = "check circle",
+                        tint = Color.Gray
+                    )
+
+                }
             }
         }
 

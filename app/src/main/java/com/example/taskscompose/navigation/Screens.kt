@@ -16,7 +16,11 @@ sealed class Screens(val route: String) {
         data object TaskByDate : Screens("task_by_date_screen")
         data object AddScreen : Screens("add_screen")
         data object CategoryScreen : Screens("category_screen")
-        data object StaticsScreen : Screens("Statics_screen")
+        data object StaticsScreen : Screens("statics_screen")
+
+        data object DateDialog : Screens("date_dialog")
+        data object TimeDialog : Screens("time_dialog")
+
 
     }
 

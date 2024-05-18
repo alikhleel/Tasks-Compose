@@ -7,8 +7,8 @@ import javax.inject.Inject
 
 
 @Reusable
-class InsertNewTaskUseCase @Inject constructor(
+class DeleteTaskUseCase @Inject constructor(
     private val taskRepository: TasksRepository
 ) {
-    suspend operator fun invoke(task: Task) = taskRepository.insertTask(task)
+    suspend operator fun invoke(task: Task) = taskRepository.deleteTask(task)
 }
