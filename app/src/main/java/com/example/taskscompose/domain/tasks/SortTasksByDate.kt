@@ -9,8 +9,8 @@ import javax.inject.Inject
 
 
 @Reusable
-class GetAllTasksUseCase @Inject constructor(
-    private val taskRepository: TasksRepository
+class SortTasksByDate @Inject constructor(
+    private val tasksRepository: TasksRepository
 ) {
-    operator fun invoke(): UIState<Flow<List<Task>>> = taskRepository.getAllTasks()
+    operator fun invoke(date: String): UIState<Flow<List<Task>>> = tasksRepository.sortTasksByTag(date)
 }

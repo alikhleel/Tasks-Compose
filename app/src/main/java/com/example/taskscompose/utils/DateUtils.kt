@@ -1,11 +1,24 @@
 package com.example.taskscompose.utils
 
 
+import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 
 object DateUtils {
+
+    fun stringToLocalDate(date: String): LocalDate {
+        val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        val localDate = LocalDate.parse(date, dtf)
+        return localDate
+    }
+
+    fun localDateToString(date: LocalDate): String {
+        val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        val formattedDate = date.format(dtf)
+        return formattedDate
+    }
 
 
     fun getTimeMiles(year: Int, month: Int, day: Int): Long {
@@ -19,10 +32,6 @@ object DateUtils {
 
     fun getCurrentTime(): Long {
         val calendar = Calendar.getInstance()
-        calendar[Calendar.HOUR_OF_DAY] = 0
-        calendar[Calendar.MINUTE] = 0
-        calendar[Calendar.SECOND] = 0
-        calendar[Calendar.MILLISECOND] = 0
         return calendar.timeInMillis
     }
 
@@ -68,6 +77,16 @@ object DateUtils {
         } else {
             LocalTime.of((hour % 12) + 12, minute)
         }
+        val outputFormatter = DateTimeFormatter.ofPattern("HH:mm")
+        return localTime.format(outputFormatter)
+    }
+
+    fun formatTimeStamp(timeStamp: Long): String {
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = timeStamp
+        val hour = calendar[Calendar.HOUR_OF_DAY]
+        val minute = calendar[Calendar.MINUTE]
+        val localTime = LocalTime.of(hour, minute)
         val outputFormatter = DateTimeFormatter.ofPattern("HH:mm")
         return localTime.format(outputFormatter)
     }

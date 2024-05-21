@@ -21,6 +21,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -32,15 +34,18 @@ import com.example.taskscompose.navigation.Screens
 
 @Composable
 fun SplashScreen(
-    navController: NavController,
-    modifier: Modifier = Modifier
+    navController: NavController, modifier: Modifier = Modifier
 ) {
     Surface {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .then(modifier)
-                .windowInsetsPadding(WindowInsets.safeDrawing),
+                .windowInsetsPadding(WindowInsets.safeDrawing)
+                .semantics {
+                    testTag = "Splash Screen"
+
+                },
             horizontalAlignment = Alignment.CenterHorizontally,
 
             ) {
@@ -53,15 +58,22 @@ fun SplashScreen(
                 verticalArrangement = Arrangement.Center
             ) {
                 Image(
+                    modifier = Modifier.semantics {
+                        testTag = "Intro Image"
+                    },
+
                     painter = painterResource(id = R.drawable.splash_logo),
-                    contentDescription = "Logo",
+                    contentDescription = "Intro Image",
                 )
                 Text(
                     text = "Tasks Todo",
                     fontWeight = FontWeight.Bold,
                     fontSize = 48.sp,
                     lineHeight = 32.sp,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.semantics {
+                        testTag = "App Name"
+                    }
                 )
                 Text(
                     text = "Plan what you will do to be more organized for today, tomorrow and beyond",
@@ -70,6 +82,9 @@ fun SplashScreen(
                     lineHeight = 24.sp,
                     color = Color.Black,
                     textAlign = TextAlign.Center,
+                    modifier = Modifier.semantics {
+                        testTag = "App Description"
+                    }
                 )
             }
             Column(
@@ -77,7 +92,11 @@ fun SplashScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Bottom
             ) {
-                Button(modifier = Modifier.fillMaxWidth(),
+                Button(modifier = Modifier
+                    .fillMaxWidth()
+                    .semantics {
+                        testTag = "Login Button"
+                    },
                     shape = MaterialTheme.shapes.small,
                     onClick = {
                         navController.navigate(Screens.Auth.Login.route)
@@ -88,7 +107,11 @@ fun SplashScreen(
 
                         )
                 }
-                OutlinedButton(modifier = Modifier.fillMaxWidth(),
+                OutlinedButton(modifier = Modifier
+                    .fillMaxWidth()
+                    .semantics {
+                        testTag = "Sign Up Button"
+                    },
                     border = BorderStroke(0.dp, Color.Transparent),
                     onClick = { navController.navigate(Screens.Auth.SignUp.route) }) {
                     Text(

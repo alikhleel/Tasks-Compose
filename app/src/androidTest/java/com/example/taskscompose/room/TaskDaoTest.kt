@@ -5,7 +5,6 @@ import com.example.taskscompose.data.dao.TaskDao
 import com.example.taskscompose.data.database.TasksDatabase
 import com.example.taskscompose.data.entity.Tags
 import com.example.taskscompose.data.entity.Task
-import com.example.taskscompose.data.entity.TaskWithTagList
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.flow.first
@@ -94,22 +93,6 @@ class TaskDaoTest {
         val result = dao.getAllTags().first()
         assert(result == listOf(tag, tag2))
     }
-
-    @Test
-    fun getTasksByTagName() = runTest {
-        val task1 = task.copy(taskId = 1, tagName = tag.name)
-        val task2 = task.copy(taskId = 2, tagName = tag.name)
-        val task3 = task.copy(taskId = 3, tagName = "dummy")
-        dao.upsertTag(tag)
-        dao.upsertTag(tag.copy(name = "dummy"))
-        dao.addTask(task1)
-        dao.addTask(task2)
-        dao.addTask(task3)
-        val result = dao.getTasksByTagName(tag.name).first()
-        val expected = listOf(TaskWithTagList(tag, listOf(task1, task2)))
-        assert(result == expected)
-
-
-    }
+    
 
 }

@@ -72,7 +72,6 @@ class MainActivity : ComponentActivity() {
                                 containerColor = Color.Red.copy(0.5f)
                             ) {
                                 Text(
-//                                modifier = Modifier.matchParentSize(),
                                     text = authViewModel.error.value
                                 )
                             }

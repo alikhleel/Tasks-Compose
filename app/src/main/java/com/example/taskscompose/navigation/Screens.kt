@@ -20,6 +20,7 @@ sealed class Screens(val route: String) {
 
         data object DateDialog : Screens("date_dialog")
         data object TimeDialog : Screens("time_dialog")
+        data object NewTagDialog : Screens("new_tag_dialog")
 
 
     }
@@ -41,7 +42,7 @@ data class BottomNavigationItem(
             BottomNavigationItem(icon = Icons.Outlined.List, route = "task_by_date_screen"),
             BottomNavigationItem(icon = Icons.Outlined.AddCircle, route = "add_screen"),
             BottomNavigationItem(icon = Icons.Outlined.Settings, route = "category_screen"),
-            BottomNavigationItem(icon = Icons.Outlined.DateRange, route = "static_screen"),
+            BottomNavigationItem(icon = Icons.Outlined.DateRange, route = "statics_screen"),
         )
     }
 }

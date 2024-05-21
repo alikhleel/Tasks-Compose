@@ -19,6 +19,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.taskscompose.navigation.BottomNavigationItem
@@ -54,6 +56,9 @@ fun BottomBar(
                             contentDescription = "",
                             modifier = Modifier
                                 .size(75.dp)
+                                .semantics {
+                                    testTag = "Navigate To Add Screen"
+                                }
                                 .clickable {
                                     navigationSelected.intValue = index
                                     navController.navigate(bottomNavigationItem.route) {
@@ -67,6 +72,9 @@ fun BottomBar(
                         Icon(bottomNavigationItem.icon,
                             contentDescription = "",
                             modifier = Modifier
+                                .semantics {
+                                    testTag = bottomNavigationItem.route
+                                }
                                 .clickable {
                                     navigationSelected.intValue = index
                                     navController.navigate(bottomNavigationItem.route) {

@@ -1,10 +1,8 @@
 package com.example.taskscompose.navigation
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -22,6 +20,7 @@ import androidx.navigation.compose.dialog
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.taskscompose.components.DatePickerDialog
+import com.example.taskscompose.components.NewTagDialog
 import com.example.taskscompose.components.TimePickerDialog
 import com.example.taskscompose.screens.auth.AuthViewModel
 import com.example.taskscompose.screens.auth.LoginScreen
@@ -30,6 +29,8 @@ import com.example.taskscompose.screens.auth.SplashScreen
 import com.example.taskscompose.screens.home.HomeScreen
 import com.example.taskscompose.screens.task.AddTaskScreen
 import com.example.taskscompose.screens.task.AddTaskViewModel
+import com.example.taskscompose.screens.task.CategoryScreen
+import com.example.taskscompose.screens.task.CategoryViewModel
 import com.example.taskscompose.screens.task.TaskViewModel
 import com.example.taskscompose.screens.task.TasksScreen
 
@@ -88,17 +89,8 @@ fun NavGraphBuilder.mainAppNavigation(
             TasksScreen(viewModel)
         }
         composable(Screens.MainApp.CategoryScreen.route) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Red)
-            ) {
-                Button(onClick = {
-                    logout.invoke()
-                }) {
-                    Text(text = "SignOut")
-                }
-            }
+            val viewModel: CategoryViewModel = hiltViewModel()
+            CategoryScreen(viewModel)
         }
         composable(Screens.MainApp.AddScreen.route) {
             val viewModel: AddTaskViewModel = hiltViewModel()
@@ -120,12 +112,25 @@ fun NavGraphBuilder.mainAppNavigation(
             TimePickerDialog(navController, argName = argName ?: "")
         }
 
+        dialog(Screens.MainApp.NewTagDialog.route) {
+            val viewModel: AddTaskViewModel = hiltViewModel()
+
+            NewTagDialog(
+                onConfirm = { tag ->
+                    viewModel.addTags(tag)
+                    navController.popBackStack()
+                },
+                onDismiss = { navController.popBackStack() }
+            )
+        }
+
         composable(Screens.MainApp.StaticsScreen.route) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color.Green)
             ) {
+                Text("Statics Screen")
 
             }
         }
