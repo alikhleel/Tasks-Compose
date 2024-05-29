@@ -98,7 +98,10 @@ fun NavGraphBuilder.mainAppNavigation(
         }
         composable(Screens.MainApp.CategoryScreen.route) {
             val viewModel: CategoryViewModel = hiltViewModel()
-            CategoryScreen(viewModel)
+            val firebaseUser = FirebaseAuth.getInstance().currentUser
+            CategoryScreen(
+                user = firebaseUser, viewModel = viewModel, navController = navController
+            )
         }
         composable(Screens.MainApp.AddScreen.route) {
             val viewModel: AddTaskViewModel = hiltViewModel()
@@ -106,10 +109,12 @@ fun NavGraphBuilder.mainAppNavigation(
             AddTaskScreen(navController, viewModel)
         }
 
-        composable(Screens.MainApp.EditScreen.route + "/{taskId}",
+        composable(
+            Screens.MainApp.EditScreen.route + "/{taskId}",
             arguments = listOf(navArgument("taskId") {
                 type = NavType.LongType
-            })) {
+            })
+        ) {
             val viewModel: AddTaskViewModel = hiltViewModel()
             val taskId = it.arguments?.getLong("taskId")
 
@@ -150,10 +155,12 @@ fun NavGraphBuilder.mainAppNavigation(
             }
         }
 
-        composable(Screens.MainApp.TaskByCategory.route + "/{type}",
+        composable(
+            Screens.MainApp.TaskByCategory.route + "/{type}",
             arguments = listOf(navArgument("type") {
                 type = NavType.StringType
-            })) { navArgument ->
+            })
+        ) { navArgument ->
             val taskViewModel: TaskViewModel = hiltViewModel()
 
             TasksByCategory(

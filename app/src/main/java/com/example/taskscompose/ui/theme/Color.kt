@@ -16,7 +16,7 @@ val Navy = Color(0xFF10275a)
 
 val white = Color(0xFFFFFFFF)
 
-
+val DarkGray = Color(0xFF393939)
 val LightGray = Color(0xFFF6F6F6)
 
 //category colors
