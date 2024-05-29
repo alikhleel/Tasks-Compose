@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.taskscompose.data.model.Time
+import com.example.taskscompose.utils.DateUtils
 import com.example.taskscompose.utils.DateUtils.convertAndFormatTime
 import com.google.android.material.timepicker.TimeFormat
 
@@ -35,10 +36,14 @@ fun TimePickerDialog(
         navController.previousBackStackEntry?.savedStateHandle?.get<String>(
             argName
         ).apply {
-            val time = this?.split(":")
-            Log.i("TimePickerDialog", "Time: $time")
-            hour = time?.get(0)?.toInt() ?: 1
-            minute = time?.get(1)?.toInt() ?: 1
+            var time: String? = this
+            if (this.isNullOrEmpty()) {
+                time = "${DateUtils.getCurrentHour()}:${DateUtils.getCurrentMinute()}"
+            }
+            val splitTime: List<String> = time!!.split(":")
+            Log.i("TimePickerDialog", "Time: $splitTime")
+            hour = splitTime[0].toInt()
+            minute = splitTime[1].toInt()
             if (hour > 12) {
                 format = "PM"
                 hour -= 12

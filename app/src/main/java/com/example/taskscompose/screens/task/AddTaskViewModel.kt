@@ -86,21 +86,31 @@ class AddTaskViewModel @Inject constructor(
     }
 
     fun editTask(taskId: Long) {
+        val task = Task(
+            taskId = taskId,
+            title = title.value,
+            description = description.value,
+            date = date.value,
+            timeFrom = timeFrom.value,
+            timeTo = timeTo.value,
+            type = type.value,
+            tagName = category.value
+        )
+        val tags = selectedTags.value.toList()
+        val taskTagCrossRefs = tags.map {
+            TaskTagCrossRef(taskId, it.name)
+        }
         viewModelScope.launch {
-            val task = Task(
-                taskId = taskId,
-                title = title.value,
-                description = description.value,
-                date = date.value,
-                timeFrom = timeFrom.value,
-                timeTo = timeTo.value,
-                type = type.value,
-                tagName = category.value
-            )
-            val tags = selectedTags.value.toList()
+            repository.insertTask(task)
 
-            insertTasksWithTags(task, tags)
+            val oldTags = repository.getTasksWithTags(taskId).tags
+            val oldTaskTagCrossRefs = oldTags.map {
+                TaskTagCrossRef(taskId, it.name)
+            }
+
+            repository.deleteTaskTagCrossRefs(oldTaskTagCrossRefs)
+            repository.insertTaskTagCrossRefs(taskTagCrossRefs)
         }
     }
-
 }
+

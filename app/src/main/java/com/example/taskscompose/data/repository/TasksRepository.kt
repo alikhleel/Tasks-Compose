@@ -31,6 +31,10 @@ class TasksRepository @Inject constructor(
         taskDao.insertTaskTagCrossRefs(taskTagCrossRefs)
     }
 
+    suspend fun deleteTaskTagCrossRefs(taskTagCrossRef: List<TaskTagCrossRef>) {
+        taskDao.deleteTaskTagCrossRefs(taskTagCrossRef)
+    }
+
     suspend fun insertTag(tag: Tags) = taskDao.upsertTag(tag)
 
     suspend fun deleteTag(tag: Tags) = taskDao.deleteTag(tag)

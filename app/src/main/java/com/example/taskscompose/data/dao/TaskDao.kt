@@ -26,6 +26,9 @@ interface TaskDao {
     @Upsert
     suspend fun insertTaskTagCrossRefs(taskTagCrossRef: List<TaskTagCrossRef>)
 
+    @Transaction
+    @Delete
+    suspend fun deleteTaskTagCrossRefs(taskTagCrossRef: List<TaskTagCrossRef>)
 
     @Transaction
     @Delete

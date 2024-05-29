@@ -53,6 +53,7 @@ fun TasksScreen(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
+            .padding(bottom = 120.dp)
 
     ) {
 
@@ -142,11 +143,12 @@ fun TasksScreen(
                     items(response.data!!.size) { task ->
                         val data = response.data[task]
                         TaskCard(
-                            modifier = Modifier.widthIn(min = 100.dp, max = 200.dp),
+//                            modifier = Modifier.widthIn(min = 100.dp, max = 200.dp),
                             task = data.task,
                             tags = data.tags,
                             onDeleteClick = { viewModel.deleteTask(data.task) },
-                            onEditClick = { viewModel.editTask(data.task, navController) }
+                            onEditClick = { viewModel.editTask(data.task, navController) },
+                            onTaskClick = {viewModel.editTask(data.task, navController)}
                         )
 
                         Spacer(Modifier.height(10.dp))

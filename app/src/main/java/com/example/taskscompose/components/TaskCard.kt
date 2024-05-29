@@ -58,14 +58,15 @@ fun TaskCard(
     val color = ColorUtils.stringToColor(
         tags.getOrNull(0)?.color ?: PrimaryColor.toArgb().toString()
     )
-    Row(
-        modifier = modifier
-            .clip(MaterialTheme.shapes.large)
-            .background(
-                color.copy(alpha = .2f)
-            )
-            .padding(8.dp)
-    ) {
+    Row(modifier = modifier
+        .clip(MaterialTheme.shapes.large)
+        .background(
+            color.copy(alpha = .2f)
+        )
+        .padding(8.dp)
+        .clickable {
+            onTaskClick(task)
+        }) {
         Column(
             modifier = Modifier.weight(1f),
         ) {
