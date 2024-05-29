@@ -49,13 +49,20 @@ class TasksRepository @Inject constructor(
         }
     }
 
-    fun getTagsWithTask(tagName: String): Flow<List<TagWithTaskLists>> {
+    fun getTagsWithTask(tagName: String): Flow<TagWithTaskLists> {
         return taskDao.getTagsWithTask(tagName)
     }
 
-    fun getTagsWithTasks(): Flow<List<TaskWithTags>> {
-        return taskDao.getTaskWithTags()
+    fun getTasksWithTagsByDate(date: String): UIState<Flow<List<TaskWithTags>>> {
+        return try {
+            val tasks = taskDao.getTasksWithTagsByDate(date)
+            UIState.Success(tasks)
+        } catch (e: Exception) {
+            UIState.Error(e.message.toString())
+        }
     }
+
+
 
     fun getTagWithTaskLists() = taskDao.getTagsWithTasks()
 

@@ -1,5 +1,7 @@
 package com.example.taskscompose.navigation
 
+import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,13 +28,16 @@ import com.example.taskscompose.screens.auth.AuthViewModel
 import com.example.taskscompose.screens.auth.LoginScreen
 import com.example.taskscompose.screens.auth.SignUpScreen
 import com.example.taskscompose.screens.auth.SplashScreen
-import com.example.taskscompose.screens.home.HomeScreen
 import com.example.taskscompose.screens.task.AddTaskScreen
 import com.example.taskscompose.screens.task.AddTaskViewModel
 import com.example.taskscompose.screens.task.CategoryScreen
 import com.example.taskscompose.screens.task.CategoryViewModel
+import com.example.taskscompose.screens.task.HomeScreen
 import com.example.taskscompose.screens.task.TaskViewModel
+import com.example.taskscompose.screens.task.TasksByCategory
 import com.example.taskscompose.screens.task.TasksScreen
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.flow.firstOrNull
 
 @Composable
 fun TasksComposeNavHost(
@@ -73,6 +78,7 @@ fun NavGraphBuilder.authNavigation(
 }
 
 
+@SuppressLint("StateFlowValueCalledInComposition")
 fun NavGraphBuilder.mainAppNavigation(
     navController: NavHostController, logout: () -> Unit
 ) {
@@ -81,12 +87,18 @@ fun NavGraphBuilder.mainAppNavigation(
         route = Screens.MainApp.route,
     ) {
         composable(Screens.MainApp.Home.route) {
-            HomeScreen()
+            val viewModel: TaskViewModel = hiltViewModel()
+            val invoke = FirebaseAuth.getInstance().currentUser
+            HomeScreen(
+                invoke = invoke,
+                navController = navController,
+                viewModel = viewModel
+            )
         }
 
         composable(Screens.MainApp.TaskByDate.route) {
             val viewModel: TaskViewModel = hiltViewModel()
-            TasksScreen(viewModel)
+            TasksScreen(viewModel = viewModel)
         }
         composable(Screens.MainApp.CategoryScreen.route) {
             val viewModel: CategoryViewModel = hiltViewModel()
@@ -134,8 +146,22 @@ fun NavGraphBuilder.mainAppNavigation(
 
             }
         }
+
+        composable(Screens.MainApp.TaskByCategory.route + "/{type}",
+            arguments = listOf(
+                navArgument("type") {
+                    type = NavType.StringType
+                }
+            )) { navArgument ->
+            val taskViewModel: TaskViewModel = hiltViewModel()
+
+            TasksByCategory(
+                navController, taskViewModel, navArgument.arguments?.getString("type")
+            )
+        }
     }
 }
+
 
 fun NavOptionsBuilder.popUpToTop(navController: NavController) {
     popUpTo(navController.currentBackStackEntry?.destination?.route ?: return) {

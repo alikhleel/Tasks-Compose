@@ -65,6 +65,10 @@ object DateUtils {
         return calendar[Calendar.HOUR_OF_DAY]
     }
 
+    fun getCurrentDate(): LocalDate {
+        return LocalDate.now()
+    }
+
 
     fun getCurrentMinute(): Int {
         val calendar = Calendar.getInstance()

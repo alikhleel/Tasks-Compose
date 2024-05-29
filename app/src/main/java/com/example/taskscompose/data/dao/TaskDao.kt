@@ -52,18 +52,22 @@ interface TaskDao {
 
     @Transaction
     @Query("SELECT * FROM tags_table WHERE tag_name = :tagName")
-    fun getTagsWithTask(tagName: String): Flow<List<TagWithTaskLists>>
+    fun getTagsWithTask(tagName: String): Flow<TagWithTaskLists>
 
     @Transaction
     @Query("SELECT * FROM tasks_table WHERE date = :date")
     fun sortTasksByCreationDate(date: String): Flow<List<Task>>
 
     @Transaction
-    @Query("SELECT * FROM tasks_table")
-    fun getTaskWithTags(): Flow<List<TaskWithTags>>
+    @Query("SELECT * FROM tasks_table WHERE date = :date")
+    fun getTasksWithTagsByDate(date: String): Flow<List<TaskWithTags>>
 
     @Transaction
     @Query("SELECT * FROM tags_table")
     fun getTagsWithTasks(): Flow<List<TagWithTaskLists>>
+
+
+//    @Transaction
+//    suspend fun getTaskWithTags(taskId: Long): List<Tags>
 
 }

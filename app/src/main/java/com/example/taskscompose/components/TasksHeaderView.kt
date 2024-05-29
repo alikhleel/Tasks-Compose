@@ -24,7 +24,8 @@ import com.example.taskscompose.ui.theme.Navy
 
 @Composable
 fun TasksHeaderView(
-    modifier: Modifier = Modifier, title: String,
+    modifier: Modifier = Modifier,
+    title: String,
     onBackClick: () -> Unit
 ) {
     Row(
