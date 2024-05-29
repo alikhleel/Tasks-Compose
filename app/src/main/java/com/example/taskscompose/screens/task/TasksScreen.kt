@@ -1,6 +1,8 @@
 package com.example.taskscompose.screens.task
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,11 +12,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -29,12 +32,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.taskscompose.R
 import com.example.taskscompose.components.TaskCard
 import com.example.taskscompose.components.WeeklyCalendar
+import com.example.taskscompose.data.entity.TaskWithTags
 import com.example.taskscompose.data.model.UIState
 import com.example.taskscompose.ui.theme.LightGray
 import com.example.taskscompose.ui.theme.LightPrimary
@@ -136,33 +141,70 @@ fun TasksScreen(
                 viewModel.centerDisplayDate.value = it
             })
 
-        LazyColumn {
+        Spacer(Modifier.height(16.dp))
 
-            when (val response = tasks.value) {
-                is UIState.Success -> {
-                    items(response.data!!.size) { task ->
-                        val data = response.data[task]
-                        TaskCard(
-//                            modifier = Modifier.widthIn(min = 100.dp, max = 200.dp),
-                            task = data.task,
-                            tags = data.tags,
-                            onDeleteClick = { viewModel.deleteTask(data.task) },
-                            onEditClick = { viewModel.editTask(data.task, navController) },
-                            onTaskClick = {viewModel.editTask(data.task, navController)}
-                        )
-
-                        Spacer(Modifier.height(10.dp))
-                    }
-                }
-
-                is UIState.Error -> {
-                    item {
-                        Text(response.error ?: "Error")
-                    }
-                }
-
-                else -> {}
+        when (val response = tasks.value) {
+            is UIState.Success -> {
+                TodoList(response.data!!, viewModel, navController)
             }
+
+            is UIState.Error -> {
+                Text(response.error ?: "Error")
+            }
+
+            else -> {}
         }
     }
 }
+
+@Composable
+private fun TodoList(
+    data: List<TaskWithTags>, viewModel: TaskViewModel, navController: NavHostController
+) {
+    LazyColumn {
+        val times = data.groupBy { it.task.timeFrom.split(":")[0] }
+        Log.i("TaskViewModel", "TodoList: $times")
+
+        items(times.keys.size) { index ->
+            val key = times.keys.elementAt(index)
+            val tasks = times[key]!!
+            Row {
+                Box(
+                    modifier = Modifier
+                        .width(60.dp)
+                        .padding(end = 16.dp)
+                ) {
+                    Text(
+                        text = "${key.padStart(2, '0')}:00",
+                        modifier = Modifier.fillMaxWidth(),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp,
+                        color = PrimaryColor,
+                        textAlign = TextAlign.Center
+                    )
+                }
+
+                LazyRow {
+
+                    items(tasks.size) {
+                        val task = tasks[it]
+                        TaskCard(modifier = Modifier
+                            .width(200.dp)
+                            .height(120.dp),
+                            task = task.task,
+                            tags = task.tags,
+                            onDeleteClick = { viewModel.deleteTask(task.task) },
+                            onEditClick = { viewModel.editTask(task.task, navController) },
+                            onTaskClick = { viewModel.editTask(task.task, navController) })
+                        Spacer(modifier = Modifier.width(8.dp))
+                    }
+                }
+            }
+            Divider(
+                modifier = Modifier.padding(vertical = 20.dp),
+            )
+
+        }
+    }
+}
+
