@@ -24,6 +24,7 @@ class AddTaskViewModel @Inject constructor(
     private val addTaskUseCase: InsertNewTaskUseCase,
     private val insertTagListUseCase: InsertTagListUseCase
 ) : ViewModel() {
+    val taskId: MutableState<Int?> = mutableStateOf(null)
 
     val title: MutableState<String> = mutableStateOf("")
     val description: MutableState<String> = mutableStateOf("")
@@ -72,6 +73,34 @@ class AddTaskViewModel @Inject constructor(
     fun handleSelectedTags(item: Tags) {
         selectedTags.value = if (selectedTags.value.contains(item)) selectedTags.value.minus(item)
         else selectedTags.value.plus(item)
+    }
+
+    suspend fun getTask(taskId: Long) {
+        val task = repository.getTasksWithTags(taskId)
+        title.value = task.task.title
+        description.value = task.task.description
+        date.value = task.task.date
+        timeFrom.value = task.task.timeFrom
+        timeTo.value = task.task.timeTo
+        selectedTags.value = task.tags.toSet()
+    }
+
+    fun editTask(taskId: Long) {
+        viewModelScope.launch {
+            val task = Task(
+                taskId = taskId,
+                title = title.value,
+                description = description.value,
+                date = date.value,
+                timeFrom = timeFrom.value,
+                timeTo = timeTo.value,
+                type = type.value,
+                tagName = category.value
+            )
+            val tags = selectedTags.value.toList()
+
+            insertTasksWithTags(task, tags)
+        }
     }
 
 }

@@ -62,9 +62,11 @@ class TasksRepository @Inject constructor(
         }
     }
 
+    suspend fun getTasksWithTags(taskId: Long): TaskWithTags {
+        return taskDao.getTasksWithTags(taskId)
+    }
 
 
     fun getTagWithTaskLists() = taskDao.getTagsWithTasks()
-
 
 }

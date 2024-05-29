@@ -3,18 +3,22 @@ package com.example.taskscompose.screens.task
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavHostController
 import com.example.taskscompose.data.entity.TagWithTaskLists
 import com.example.taskscompose.data.entity.Tags
+import com.example.taskscompose.data.entity.Task
 import com.example.taskscompose.data.entity.TaskType
 import com.example.taskscompose.data.entity.TaskWithTags
 import com.example.taskscompose.data.model.UIState
 import com.example.taskscompose.domain.tags.GetAllTagsUseCase
 import com.example.taskscompose.domain.tags.InsertTagListUseCase
+import com.example.taskscompose.domain.tasks.DeleteTaskUseCase
 import com.example.taskscompose.domain.tasks.GetAllTagWithTasksUseCase
 import com.example.taskscompose.domain.tasks.GetAllTasksUseCase
 import com.example.taskscompose.domain.tasks.GetTasksWithTagByDateUseCase
 import com.example.taskscompose.domain.tasks.GetTasksWithTagNameUseCase
 import com.example.taskscompose.domain.tasks.InsertNewTaskUseCase
+import com.example.taskscompose.navigation.Screens
 import com.example.taskscompose.utils.DateUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,6 +32,7 @@ class TaskViewModel @Inject constructor(
     private val getAllTagsUseCase: GetAllTagsUseCase,
     private val getAllTagWithTasksUseCase: GetAllTagWithTasksUseCase,
     private val insertTaskUseCase: InsertNewTaskUseCase,
+    private val deleteTaskUseCase: DeleteTaskUseCase,
     private val insertTagListUseCase: InsertTagListUseCase,
     private val getTasksWithTagByDateUseCase: GetTasksWithTagByDateUseCase,
     private val getTasksWithTagNameUseCase: GetTasksWithTagNameUseCase
@@ -129,5 +134,15 @@ class TaskViewModel @Inject constructor(
             taskWithTags.value = it
         }
 
+    }
+
+    fun deleteTask(task: Task) {
+        viewModelScope.launch {
+            deleteTaskUseCase(task)
+        }
+    }
+
+    fun editTask(task: Task, navController: NavHostController) {
+        navController.navigate(Screens.MainApp.EditScreen.route+"/${task.taskId}")
     }
 }

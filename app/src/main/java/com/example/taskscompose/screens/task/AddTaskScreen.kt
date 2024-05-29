@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,8 +28,14 @@ import com.example.taskscompose.navigation.Screens
 
 @Composable
 fun AddTaskScreen(
-    navController: NavHostController, viewModel: AddTaskViewModel
+    navController: NavHostController, viewModel: AddTaskViewModel, taskId: Long? = null
 ) {
+    LaunchedEffect(Unit) {
+        if (taskId != null) {
+            viewModel.getTask(taskId)
+        }
+    }
+
     navController.currentBackStackEntry?.savedStateHandle?.getLiveData<String>("selectedDate")
         ?.observe(
             navController.currentBackStackEntry!!
@@ -74,8 +81,7 @@ fun AddTaskScreen(
                 contentDescription = "Date Picker",
                 modifier = Modifier.clickable {
                     navController.currentBackStackEntry?.savedStateHandle?.set(
-                        "selectedDate",
-                        viewModel.date.value
+                        "selectedDate", viewModel.date.value
                     )
                     navController.navigate(Screens.MainApp.DateDialog.route)
                 })
@@ -96,8 +102,7 @@ fun AddTaskScreen(
                     contentDescription = "From Time Picker",
                     modifier = Modifier.clickable {
                         navController.currentBackStackEntry?.savedStateHandle?.set(
-                            "timeFrom",
-                            viewModel.timeFrom.value
+                            "timeFrom", viewModel.timeFrom.value
                         )
                         navController.navigate(Screens.MainApp.TimeDialog.route + "/timeFrom")
                     })
@@ -112,8 +117,7 @@ fun AddTaskScreen(
                     contentDescription = "From Time Picker",
                     modifier = Modifier.clickable {
                         navController.currentBackStackEntry?.savedStateHandle?.set(
-                            "timeTo",
-                            viewModel.timeTo.value
+                            "timeTo", viewModel.timeTo.value
                         )
                         navController.navigate(Screens.MainApp.TimeDialog.route + "/timeTo")
                     })
@@ -139,7 +143,10 @@ fun AddTaskScreen(
 
 
         FormCreateButton() {
-            viewModel.addTask()
+            if (taskId == null)
+                viewModel.addTask()
+            else
+                viewModel.editTask(taskId)
         }
 
     }

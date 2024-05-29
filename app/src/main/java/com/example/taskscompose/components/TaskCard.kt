@@ -1,14 +1,17 @@
 package com.example.taskscompose.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
@@ -24,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
@@ -121,36 +125,54 @@ fun TaskCard(
             }
 
         }
-        Box() {
+        Box {
             IconButton(modifier = Modifier.size(16.dp), onClick = { expanded = !expanded }) {
                 Icon(
                     Icons.Outlined.MoreVert, contentDescription = "More Options", tint = Color.Black
                 )
             }
 
-            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                Column(
-                    modifier = Modifier.background(Color.White)
-                ){
-                Row {
-                    IconButton(onClick = { onEditClick(task) }) {
-                        Icon(
-                            Icons.Outlined.Edit, contentDescription = "Edit", tint = Color.Black
-                        )
+            DropdownMenu(modifier = Modifier
+                .background(Color.White)
+                .padding(4.dp)
+                .wrapContentWidth(),
+                expanded = expanded,
+                onDismissRequest = { expanded = false }) {
+
+                Row(modifier = Modifier
+                    .clickable {
+                        expanded = false
+                        onEditClick(task)
                     }
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically) {
+
+                    Icon(
+                        Icons.Outlined.Edit, contentDescription = "Edit", tint = Color.Black
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
                     Text(text = "Edit")
+
                 }
-                    Divider()
-                Row {
-                    IconButton(onClick = { onDeleteClick(task) }) {
-                        Icon(
-                            Icons.Outlined.Delete,
-                            contentDescription = "Delete",
-                            tint = Color.Black
-                        )
-                        Text(text = "Delete")
-                    }}
+                Divider(modifier = Modifier.padding(vertical = 8.dp))
+                Row(modifier = Modifier
+                    .clickable {
+                        expanded = false
+                        onDeleteClick(task)
+                    }
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        Icons.Outlined.Delete, contentDescription = "Delete", tint = Color.Black
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(text = "Delete")
                 }
+
             }
         }
 

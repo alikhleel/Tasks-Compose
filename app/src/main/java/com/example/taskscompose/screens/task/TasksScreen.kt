@@ -31,6 +31,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.taskscompose.R
 import com.example.taskscompose.components.TaskCard
 import com.example.taskscompose.components.WeeklyCalendar
@@ -44,7 +45,7 @@ import com.kizitonwose.calendar.core.yearMonth
 
 @Composable
 fun TasksScreen(
-    modifier: Modifier = Modifier, viewModel: TaskViewModel
+    modifier: Modifier = Modifier, viewModel: TaskViewModel, navController: NavHostController
 ) {
 
     val tasks = viewModel.tasksState.collectAsState()
@@ -144,6 +145,8 @@ fun TasksScreen(
                             modifier = Modifier.widthIn(min = 100.dp, max = 200.dp),
                             task = data.task,
                             tags = data.tags,
+                            onDeleteClick = { viewModel.deleteTask(data.task) },
+                            onEditClick = { viewModel.editTask(data.task, navController) }
                         )
 
                         Spacer(Modifier.height(10.dp))

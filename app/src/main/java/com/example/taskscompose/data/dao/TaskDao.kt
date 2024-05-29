@@ -66,8 +66,8 @@ interface TaskDao {
     @Query("SELECT * FROM tags_table")
     fun getTagsWithTasks(): Flow<List<TagWithTaskLists>>
 
-
-//    @Transaction
-//    suspend fun getTaskWithTags(taskId: Long): List<Tags>
+    @Transaction
+    @Query("SELECT * FROM tasks_table WHERE task_Id = :taskId")
+    suspend fun getTasksWithTags(taskId: Long): TaskWithTags
 
 }

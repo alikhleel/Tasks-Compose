@@ -1,7 +1,6 @@
 package com.example.taskscompose.navigation
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,7 +36,6 @@ import com.example.taskscompose.screens.task.TaskViewModel
 import com.example.taskscompose.screens.task.TasksByCategory
 import com.example.taskscompose.screens.task.TasksScreen
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.flow.firstOrNull
 
 @Composable
 fun TasksComposeNavHost(
@@ -90,15 +88,13 @@ fun NavGraphBuilder.mainAppNavigation(
             val viewModel: TaskViewModel = hiltViewModel()
             val invoke = FirebaseAuth.getInstance().currentUser
             HomeScreen(
-                invoke = invoke,
-                navController = navController,
-                viewModel = viewModel
+                invoke = invoke, navController = navController, viewModel = viewModel
             )
         }
 
         composable(Screens.MainApp.TaskByDate.route) {
             val viewModel: TaskViewModel = hiltViewModel()
-            TasksScreen(viewModel = viewModel)
+            TasksScreen(viewModel = viewModel, navController = navController)
         }
         composable(Screens.MainApp.CategoryScreen.route) {
             val viewModel: CategoryViewModel = hiltViewModel()
@@ -108,6 +104,16 @@ fun NavGraphBuilder.mainAppNavigation(
             val viewModel: AddTaskViewModel = hiltViewModel()
 
             AddTaskScreen(navController, viewModel)
+        }
+
+        composable(Screens.MainApp.EditScreen.route + "/{taskId}",
+            arguments = listOf(navArgument("taskId") {
+                type = NavType.LongType
+            })) {
+            val viewModel: AddTaskViewModel = hiltViewModel()
+            val taskId = it.arguments?.getLong("taskId")
+
+            AddTaskScreen(navController, viewModel, taskId)
         }
 
         dialog(Screens.MainApp.DateDialog.route) {
@@ -127,13 +133,10 @@ fun NavGraphBuilder.mainAppNavigation(
         dialog(Screens.MainApp.NewTagDialog.route) {
             val viewModel: AddTaskViewModel = hiltViewModel()
 
-            NewTagDialog(
-                onConfirm = { tag ->
-                    viewModel.addTags(tag)
-                    navController.popBackStack()
-                },
-                onDismiss = { navController.popBackStack() }
-            )
+            NewTagDialog(onConfirm = { tag ->
+                viewModel.addTags(tag)
+                navController.popBackStack()
+            }, onDismiss = { navController.popBackStack() })
         }
 
         composable(Screens.MainApp.StaticsScreen.route) {
@@ -148,11 +151,9 @@ fun NavGraphBuilder.mainAppNavigation(
         }
 
         composable(Screens.MainApp.TaskByCategory.route + "/{type}",
-            arguments = listOf(
-                navArgument("type") {
-                    type = NavType.StringType
-                }
-            )) { navArgument ->
+            arguments = listOf(navArgument("type") {
+                type = NavType.StringType
+            })) { navArgument ->
             val taskViewModel: TaskViewModel = hiltViewModel()
 
             TasksByCategory(
