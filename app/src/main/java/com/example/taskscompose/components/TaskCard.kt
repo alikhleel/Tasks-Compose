@@ -57,8 +57,6 @@ fun TaskCard(
     Row(
         modifier = modifier
             .clip(MaterialTheme.shapes.large)
-            .width(200.dp)
-            .height(115.dp)
             .background(
                 color.copy(alpha = .2f)
             )
