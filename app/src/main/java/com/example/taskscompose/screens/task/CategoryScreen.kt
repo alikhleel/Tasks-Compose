@@ -4,6 +4,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,6 +47,7 @@ import com.example.taskscompose.R
 import com.example.taskscompose.data.entity.Tags
 import com.example.taskscompose.getIconName
 import com.example.taskscompose.iconByName
+import com.example.taskscompose.navigation.Screens
 import com.example.taskscompose.ui.theme.DarkGray
 import com.example.taskscompose.ui.theme.PrimaryColor
 import com.example.taskscompose.utils.ColorUtils
@@ -99,7 +101,9 @@ fun CategoryScreen(
                     modifier = Modifier.padding(8.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    TagCard(tag, size)
+                    TagCard(tag, size) {
+                        navController.navigate(Screens.MainApp.TaskByCategory.route + "/${it.name}")
+                    }
                 }
 
             }
@@ -111,11 +115,14 @@ fun CategoryScreen(
 }
 
 @Composable
-private fun TagCard(tag: Tags, size: Int) {
+private fun TagCard(tag: Tags, size: Int, onClick: (tag: Tags) -> Unit = {}) {
     Card(
         modifier = Modifier
             .sizeIn(maxWidth = 200.dp, maxHeight = 200.dp)
-            .aspectRatio(1f),
+            .aspectRatio(1f)
+            .clickable {
+                onClick(tag)
+            },
         shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(
             containerColor = ColorUtils.stringToColor(tag.color).copy(alpha = 0.5f)
