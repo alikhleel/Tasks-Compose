@@ -1,7 +1,7 @@
 package com.example.taskscompose.screens.task
 
+import android.content.Context
 import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,19 +23,29 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.outlined.ExitToApp
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -57,6 +67,7 @@ import com.google.firebase.auth.FirebaseUser
 fun CategoryScreen(
     modifier: Modifier = Modifier,
     user: FirebaseUser?,
+    onLogout: (Context) -> Unit,
     viewModel: CategoryViewModel,
     navController: NavHostController
 ) {
@@ -65,7 +76,9 @@ fun CategoryScreen(
     }
 
     val tags = viewModel.tags.collectAsState(null)
-    Log.d("CategoryScreen", "tags: $tags")
+    var dropDownExpanded by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
     LazyVerticalGrid(
         modifier = modifier
             .padding(horizontal = 16.dp)
@@ -76,6 +89,46 @@ fun CategoryScreen(
             val photo = user.photoUrl
             val name = user.displayName
             val email = user.email
+            item(span = { GridItemSpan(2) }) {
+                Box(
+                    modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd
+                ) {
+                    IconButton(onClick = { dropDownExpanded = !dropDownExpanded }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.more_square),
+                            contentDescription = "more options"
+                        )
+                        DropdownMenu(
+                            modifier = Modifier
+                                .clip(MaterialTheme.shapes.large)
+                                .background(Color.White),
+                            expanded = dropDownExpanded,
+                            onDismissRequest = { dropDownExpanded = !dropDownExpanded }) {
+                            DropdownMenuItem(
+                                text = { Text(text = "Settings") },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Settings,
+                                        contentDescription = "settings"
+                                    )
+                                },
+                                onClick = { /*TODO*/ },
+                            )
+                            DropdownMenuItem(
+                                text = { Text(text = "Log Out") },
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Outlined.ExitToApp,
+                                        contentDescription = "log out"
+                                    )
+                                },
+                                onClick = { onLogout(context) },
+                            )
+                        }
+                    }
+                }
+            }
+
             item(span = { GridItemSpan(2) }) {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
@@ -98,8 +151,7 @@ fun CategoryScreen(
                 val tag = item.first
                 val size = item.second
                 Box(
-                    modifier = Modifier.padding(8.dp),
-                    contentAlignment = Alignment.Center
+                    modifier = Modifier.padding(8.dp), contentAlignment = Alignment.Center
                 ) {
                     TagCard(tag, size) {
                         navController.navigate(Screens.MainApp.TaskByCategory.route + "/${it.name}")
@@ -122,9 +174,7 @@ private fun TagCard(tag: Tags, size: Int, onClick: (tag: Tags) -> Unit = {}) {
             .aspectRatio(1f)
             .clickable {
                 onClick(tag)
-            },
-        shape = MaterialTheme.shapes.large,
-        colors = CardDefaults.cardColors(
+            }, shape = MaterialTheme.shapes.large, colors = CardDefaults.cardColors(
             containerColor = ColorUtils.stringToColor(tag.color).copy(alpha = 0.5f)
         )
     ) {

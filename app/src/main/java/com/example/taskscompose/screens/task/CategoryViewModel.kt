@@ -16,7 +16,6 @@ class CategoryViewModel
 ) : ViewModel() {
     val tags: MutableStateFlow<List<Pair<Tags, Int>>> = MutableStateFlow(emptyList())
 
-
     suspend fun getAllTags() {
 
         getAllTagWithTasksUseCase().collect { data ->

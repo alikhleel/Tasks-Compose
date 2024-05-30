@@ -99,8 +99,13 @@ fun NavGraphBuilder.mainAppNavigation(
         composable(Screens.MainApp.CategoryScreen.route) {
             val viewModel: CategoryViewModel = hiltViewModel()
             val firebaseUser = FirebaseAuth.getInstance().currentUser
+            val authViewModel: AuthViewModel = hiltViewModel()
+
             CategoryScreen(
-                user = firebaseUser, viewModel = viewModel, navController = navController
+                user = firebaseUser,
+                viewModel = viewModel,
+                onLogout = { context -> authViewModel.logout(context) },
+                navController = navController
             )
         }
         composable(Screens.MainApp.AddScreen.route) {
