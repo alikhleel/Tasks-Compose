@@ -142,11 +142,13 @@ fun AddTaskScreen(
         Spacer(modifier = Modifier.weight(1f))
 
 
-        FormCreateButton() {
-            if (taskId == null)
-                viewModel.addTask()
-            else
-                viewModel.editTask(taskId)
+        FormCreateButton(
+            text = if (taskId != null) "Edit Task" else "Add Task",
+        ) {
+            if (taskId == null) viewModel.addTask()
+            else viewModel.editTask(taskId)
+
+            navController.popBackStack()
         }
 
     }

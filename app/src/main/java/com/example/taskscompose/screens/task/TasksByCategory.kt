@@ -37,12 +37,14 @@ fun TasksByCategory(
             LazyColumn(
                 modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                items(item.tasks.size) {
-                    TaskCard(
-                        task = item.tasks[it], tags = listOf(
+                items(item.tasks.size) { index ->
+                    TaskCard(task = item.tasks[index],
+                        tags = listOf(
                             item.tag
-                        )
-                    )
+                        ),
+                        onTaskClick = { taskViewModel.editTask(it, navController) },
+                        onDeleteClick = { taskViewModel.deleteTask(it) },
+                        onEditClick = { taskViewModel.editTask(it, navController) })
                 }
             }
         }

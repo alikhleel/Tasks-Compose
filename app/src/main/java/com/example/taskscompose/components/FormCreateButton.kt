@@ -17,8 +17,10 @@ import com.example.taskscompose.ui.theme.PrimaryColor
 
 @Composable
 fun FormCreateButton(
+    text: String,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit) {
+    onClick: () -> Unit
+) {
     Button(
         onClick = onClick,
         shape = RoundedCornerShape(12.dp),
@@ -34,7 +36,7 @@ fun FormCreateButton(
 
     ) {
         Text(
-            text = "Create",
+            text = text,
             modifier = Modifier.padding(vertical = 8.dp),
             fontSize = 16.sp,
             color = Color.White
