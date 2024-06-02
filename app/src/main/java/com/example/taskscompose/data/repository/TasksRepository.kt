@@ -6,6 +6,7 @@ import com.example.taskscompose.data.entity.Tags
 import com.example.taskscompose.data.entity.Task
 import com.example.taskscompose.data.entity.TaskTagCrossRef
 import com.example.taskscompose.data.entity.TaskWithTags
+import com.example.taskscompose.data.entity.TaskWithTagsCombine
 import com.example.taskscompose.data.model.UIState
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -57,9 +58,11 @@ class TasksRepository @Inject constructor(
         return taskDao.getTagsWithTask(tagName)
     }
 
-    fun getTasksWithTagsByDate(date: String): UIState<Flow<List<TaskWithTags>>> {
+    fun getTasksWithTagsByDate(
+        date: String, query: String = ""
+    ): UIState<Flow<List<TaskWithTags>>> {
         return try {
-            val tasks = taskDao.getTasksWithTagsByDate(date)
+            val tasks = taskDao.getTasksWithTagsByDate(date, query)
             UIState.Success(tasks)
         } catch (e: Exception) {
             UIState.Error(e.message.toString())
@@ -73,4 +76,13 @@ class TasksRepository @Inject constructor(
 
     fun getTagWithTaskLists() = taskDao.getTagsWithTasks()
 
+    fun getCombineSearch(
+        date: String, query: String, tag: String
+    ): TaskWithTagsCombine {
+        return taskDao.getCombineSearch(
+            query = query,
+            date = date,
+            tagName = tag
+        )
+    }
 }

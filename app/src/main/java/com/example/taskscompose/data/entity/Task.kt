@@ -14,6 +14,7 @@ import com.example.taskscompose.ui.theme.LightBlue
 import com.example.taskscompose.ui.theme.LightGreen
 import com.example.taskscompose.ui.theme.LightPurple
 import com.example.taskscompose.ui.theme.LightRed
+import kotlinx.coroutines.flow.Flow
 
 
 @Entity(tableName = "tasks_table")
@@ -28,10 +29,14 @@ data class Task(
     @ColumnInfo(name = "task_tag_name") val tagName: String = "",
 )
 
-enum class TaskType(val type: String, val color: String, val icon:String) {
+data class TaskWithTagsCombine(
+    val tasksWithTags: Flow<List<TaskWithTags>>,
+    val tagWithTasks: Flow<TagWithTaskLists>
+)
+
+enum class TaskType(val type: String, val color: String, val icon: String) {
     Pending("Pending", LightPurple.toArgb().toString(), getIconName(Icons.Outlined.DateRange)),
     OnGoing("OnGoing", LightGreen.toArgb().toString(), getIconName(Icons.Outlined.Build)),
     Cancelled("Cancelled", LightRed.toArgb().toString(), getIconName(Icons.Outlined.Delete)),
     Completed("Completed", LightBlue.toArgb().toString(), getIconName(Icons.Outlined.Done)),
-
 }

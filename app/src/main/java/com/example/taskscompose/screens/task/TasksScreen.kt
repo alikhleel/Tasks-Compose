@@ -14,22 +14,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -37,11 +28,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.taskscompose.R
+import com.example.taskscompose.components.CustomSearchBar
 import com.example.taskscompose.components.TaskCard
 import com.example.taskscompose.components.WeeklyCalendar
 import com.example.taskscompose.data.entity.TaskWithTags
 import com.example.taskscompose.data.model.UIState
-import com.example.taskscompose.ui.theme.LightGray
 import com.example.taskscompose.ui.theme.LightPrimary
 import com.example.taskscompose.ui.theme.PrimaryColor
 import com.example.taskscompose.utils.DateUtils
@@ -62,46 +53,11 @@ fun TasksScreen(
 
     ) {
 
-        TextField(modifier = Modifier
-            .clip(MaterialTheme.shapes.medium)
-            .fillMaxWidth(),
-            value = "",
-            onValueChange = {},
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = LightGray,
-                unfocusedContainerColor = LightGray,
-                focusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                focusedTextColor = Color.Black,
-                unfocusedTextColor = Color.Black
-            ),
-            leadingIcon = {
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(
-                        Icons.Outlined.Search,
-                        contentDescription = "Search",
-                        tint = LightPrimary,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-            },
-            placeholder = {
-                Text("Search for task")
-            },
-            trailingIcon = {
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(
-                        Icons.Filled.Clear,
-                        contentDescription = "Clear",
-                        tint = LightPrimary,
-                        modifier = Modifier.size(20.dp)
-                    )
-
-                }
-            }
-
-
+        CustomSearchBar(
+            query = viewModel.query.value,
+            onQueryChange = { viewModel.onQueryChangedByDate(it) },
+            onClearClick = { viewModel.onQueryChangedByDate("") },
+            onSearchClick = { viewModel.onQueryChangedByDate(it) }
         )
         Spacer(Modifier.height(16.dp))
         Row(
@@ -149,13 +105,14 @@ fun TasksScreen(
             }
 
             is UIState.Error -> {
-                Text(response.error ?: "Error")
+                Text(response.error)
             }
 
             else -> {}
         }
     }
 }
+
 
 @Composable
 private fun TodoList(

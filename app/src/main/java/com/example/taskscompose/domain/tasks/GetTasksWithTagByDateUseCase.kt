@@ -12,6 +12,6 @@ import javax.inject.Inject
 class GetTasksWithTagByDateUseCase @Inject constructor(
     private val tasksRepository: TasksRepository
 ) {
-    operator fun invoke(date: String): UIState<Flow<List<TaskWithTags>>> =
-        tasksRepository.getTasksWithTagsByDate(date)
+    operator fun invoke(date: String, query: String): UIState<Flow<List<TaskWithTags>>> =
+        tasksRepository.getTasksWithTagsByDate(date, query)
 }

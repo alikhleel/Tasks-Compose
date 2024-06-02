@@ -1,7 +1,6 @@
 package com.example.taskscompose.screens.task
 
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,6 +12,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.taskscompose.components.CustomSearchBar
 import com.example.taskscompose.components.TaskCard
 import com.example.taskscompose.components.TasksHeaderView
 
@@ -27,16 +27,24 @@ fun TasksByCategory(
     val results = taskViewModel.taskWithTags.collectAsState(null)
 
     val item = results.value
-    Log.d("TasksByCategory", "TasksByCategory: $item")
 
     Column(modifier = Modifier.padding(16.dp)) {
-        TasksHeaderView(title = item?.tag?.name.orEmpty()) {
+        TasksHeaderView(title = item?.tag?.name ?: "Tag Title") {
             navController.popBackStack()
         }
         if (item != null) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
+
+                item {
+                    CustomSearchBar(
+                        onSearchClick = { taskViewModel.onQueryChangedByTagName(it) },
+                        onClearClick = { taskViewModel.onQueryChangedByTagName("") },
+                        query = taskViewModel.query.value,
+                        onQueryChange = { taskViewModel.onQueryChangedByTagName(it) }
+                    )
+                }
                 items(item.tasks.size) { index ->
                     TaskCard(task = item.tasks[index],
                         tags = listOf(

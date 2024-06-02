@@ -1,5 +1,6 @@
 package com.example.taskscompose.screens.task
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,14 +14,12 @@ import com.example.taskscompose.data.model.UIState
 import com.example.taskscompose.domain.tags.GetAllTagsUseCase
 import com.example.taskscompose.domain.tags.InsertTagListUseCase
 import com.example.taskscompose.domain.tasks.DeleteTaskUseCase
-import com.example.taskscompose.domain.tasks.GetAllTagWithTasksUseCase
-import com.example.taskscompose.domain.tasks.GetAllTasksUseCase
-import com.example.taskscompose.domain.tasks.GetTasksWithTagByDateUseCase
+import com.example.taskscompose.domain.tasks.GetCombineSearchUseCase
 import com.example.taskscompose.domain.tasks.GetTasksWithTagNameUseCase
-import com.example.taskscompose.domain.tasks.InsertNewTaskUseCase
 import com.example.taskscompose.navigation.Screens
 import com.example.taskscompose.utils.DateUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -28,15 +27,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TaskViewModel @Inject constructor(
-    private val getAllTasksUseCase: GetAllTasksUseCase,
     private val getAllTagsUseCase: GetAllTagsUseCase,
-    private val getAllTagWithTasksUseCase: GetAllTagWithTasksUseCase,
-    private val insertTaskUseCase: InsertNewTaskUseCase,
     private val deleteTaskUseCase: DeleteTaskUseCase,
     private val insertTagListUseCase: InsertTagListUseCase,
-    private val getTasksWithTagByDateUseCase: GetTasksWithTagByDateUseCase,
-    private val getTasksWithTagNameUseCase: GetTasksWithTagNameUseCase
-
+    private val getTasksWithTagNameUseCase: GetTasksWithTagNameUseCase,
+    private val getCombineSearchUseCase: GetCombineSearchUseCase
 ) : ViewModel() {
     init {
         viewModelScope.launch {
@@ -49,6 +44,9 @@ class TaskViewModel @Inject constructor(
         }
     }
 
+    private val _query = mutableStateOf("")
+    val query = _query
+
     val tasksState: MutableStateFlow<UIState<List<TaskWithTags>>> =
         MutableStateFlow(UIState.Loading())
 
@@ -60,7 +58,7 @@ class TaskViewModel @Inject constructor(
     val onGoingTasks = MutableStateFlow<TagWithTaskLists?>(null)
 
     val selectedDate = mutableStateOf(DateUtils.localDateToString(LocalDate.now()))
-
+    val currentTag = mutableStateOf("")
     val centerDisplayDate = mutableStateOf(LocalDate.now())
     val taskWithTags = MutableStateFlow<TagWithTaskLists?>(null)
 
@@ -106,35 +104,20 @@ class TaskViewModel @Inject constructor(
     }
 
     fun filterTasksByDate() {
-        getTasksWithTagsByDate(selectedDate.value)
+        sortTasksByDate(selectedDate.value)
     }
 
     fun sortTasksByDate(date: String) {
-        getTasksWithTagsByDate(date)
+        selectedDate.value = date
+        combineSearchQuery(query.value, date, "")
     }
 
-    private fun getTasksWithTagsByDate(date: String) {
-        viewModelScope.launch {
-            when (val response = getTasksWithTagByDateUseCase(date)) {
-                is UIState.Success -> {
-                    response.data!!.collect {
-                        tasksState.value = UIState.Success(it)
-                    }
-                }
 
-                is UIState.Error -> tasksState.value = UIState.Error(response.error)
-                is UIState.Empty -> tasksState.value = UIState.Empty(title = response.title)
-                is UIState.Loading -> tasksState.value = UIState.Loading()
-            }
-        }
+    fun getTasksByTagName(tagName: String) {
+        currentTag.value = tagName
+        combineSearchQuery("", "", tagName)
     }
 
-    suspend fun getTasksByTagName(tagName: String) {
-        getTasksWithTagNameUseCase(tagName).collect {
-            taskWithTags.value = it
-        }
-
-    }
 
     fun deleteTask(task: Task) {
         viewModelScope.launch {
@@ -142,7 +125,54 @@ class TaskViewModel @Inject constructor(
         }
     }
 
-    fun editTask(task: Task, navController: NavHostController) {
-        navController.navigate(Screens.MainApp.EditScreen.route+"/${task.taskId}")
+    private fun onQueryChanged(query: String) {
+        _query.value = query
     }
+
+    fun onQueryChangedByTagName(query: String) {
+        onQueryChanged(query)
+        combineSearchQuery(query, "", currentTag.value)
+    }
+
+    fun onQueryChangedByDate(query: String) {
+        onQueryChanged(query)
+        combineSearchQuery(query, selectedDate.value, "")
+    }
+
+    fun editTask(task: Task, navController: NavHostController) {
+        navController.navigate(Screens.MainApp.EditScreen.route + "/${task.taskId}")
+    }
+
+    private fun combineSearchQuery(query: String, date: String, tagName: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = getCombineSearchUseCase(
+                query = query, date = date, tagName = tagName
+            )
+            Log.d("TaskViewModel", "response: $query $date $tagName")
+
+            launch {
+                response.tagWithTasks.collect {
+                    taskWithTags.value = it
+                    if (taskWithTags.value != null && taskWithTags.value!!.tasks.isNotEmpty()) {
+                        val filteredTasks = taskWithTags.value!!.tasks.filter { task ->
+                            task.title.contains(query) ||
+                                    task.description.contains(query)
+                        }
+                        taskWithTags.value = taskWithTags.value?.copy(tasks = filteredTasks)
+                        Log.d("TaskViewModel", "tagWithTasks: $taskWithTags")
+
+                    }
+                }
+            }
+
+            launch {
+                response.tasksWithTags.collect {
+                    tasksState.value = UIState.Success(it)
+                    Log.d("TaskViewModel", "tasksState: $it")
+
+                }
+            }
+        }
+    }
+
 }

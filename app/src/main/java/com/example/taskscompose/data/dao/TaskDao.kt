@@ -10,6 +10,7 @@ import com.example.taskscompose.data.entity.Tags
 import com.example.taskscompose.data.entity.Task
 import com.example.taskscompose.data.entity.TaskTagCrossRef
 import com.example.taskscompose.data.entity.TaskWithTags
+import com.example.taskscompose.data.entity.TaskWithTagsCombine
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -62,8 +63,17 @@ interface TaskDao {
     fun sortTasksByCreationDate(date: String): Flow<List<Task>>
 
     @Transaction
-    @Query("SELECT * FROM tasks_table WHERE date = :date")
-    fun getTasksWithTagsByDate(date: String): Flow<List<TaskWithTags>>
+    @Query("SELECT * FROM tasks_table WHERE date = :date And (task_title LIKE '%' || :query || '%' OR task_description LIKE '%' || :query || '%')")
+    fun getTasksWithTagsByDate(date: String, query: String): Flow<List<TaskWithTags>>
+
+    @Transaction
+    fun getCombineSearch(tagName: String, date: String, query: String): TaskWithTagsCombine {
+        val tagsWithTasks = getTagsWithTask(tagName)
+        val tasksWithTagsByDate = getTasksWithTagsByDate(date, query)
+        return TaskWithTagsCombine(
+            tagWithTasks = tagsWithTasks, tasksWithTags = tasksWithTagsByDate
+        )
+    }
 
     @Transaction
     @Query("SELECT * FROM tags_table")
