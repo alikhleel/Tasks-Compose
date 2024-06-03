@@ -112,7 +112,7 @@ fun CategoryScreen(
                                         contentDescription = "settings"
                                     )
                                 },
-                                onClick = { /*TODO*/ },
+                                onClick = { navController.navigate(Screens.MainApp.SettingsScreen.route) },
                             )
                             DropdownMenuItem(
                                 text = { Text(text = "Log Out") },

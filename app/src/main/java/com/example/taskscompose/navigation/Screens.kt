@@ -24,6 +24,8 @@ sealed class Screens(val route: String) {
         data object TaskByCategory : Screens("task_by_category")
         data object EditScreen : Screens("edit_screen")
 
+        data object SettingsScreen : Screens("settings_screen")
+
     }
 
     data object Auth : Screens("authGraph") {

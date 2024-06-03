@@ -32,6 +32,7 @@ import com.example.taskscompose.screens.task.AddTaskViewModel
 import com.example.taskscompose.screens.task.CategoryScreen
 import com.example.taskscompose.screens.task.CategoryViewModel
 import com.example.taskscompose.screens.task.HomeScreen
+import com.example.taskscompose.screens.task.SettingsScreen
 import com.example.taskscompose.screens.task.TaskViewModel
 import com.example.taskscompose.screens.task.TasksByCategory
 import com.example.taskscompose.screens.task.TasksScreen
@@ -171,6 +172,10 @@ fun NavGraphBuilder.mainAppNavigation(
             TasksByCategory(
                 navController, taskViewModel, navArgument.arguments?.getString("type")
             )
+        }
+
+        composable(Screens.MainApp.SettingsScreen.route) {
+            SettingsScreen(navController)
         }
     }
 }
