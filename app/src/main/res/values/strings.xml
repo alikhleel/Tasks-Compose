@@ -1,3 +1,8 @@
 <resources>
-    <string name="app_name">TasksCompose</string>
+    <string name="app_name" translatable="false">TasksCompose</string>
+    <string name="hello">Hello</string>
+    <string name="en" translatable="false">English</string>
+    <string name="ar" translatable="false">عربي</string>
+    <string name="language">English</string>
+
 </resources>

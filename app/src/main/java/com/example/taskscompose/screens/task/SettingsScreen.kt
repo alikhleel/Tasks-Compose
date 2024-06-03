@@ -1,5 +1,7 @@
 package com.example.taskscompose.screens.task
 
+import android.util.Log
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -30,35 +32,44 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.core.os.LocaleListCompat
 import androidx.navigation.NavHostController
 import com.example.taskscompose.components.TasksHeaderView
+import com.example.taskscompose.ui.theme.Languages
 import com.example.taskscompose.ui.theme.PrimaryColor
+import com.example.taskscompose.ui.theme.convertLanguage
 
 
 @Composable
 fun SettingsScreen(
     navController: NavHostController
 ) {
+
+    val currentAppLocale = AppCompatDelegate.getApplicationLocales()
+    Log.d("SettingsScreen", "currentAppLocale: $currentAppLocale")
+
     var isLanguageDialogOpen by rememberSaveable { mutableStateOf(false) }
-    var selectedLanguage by rememberSaveable { mutableStateOf("English") }
+
 
     if (isLanguageDialogOpen) {
-        LanguageDialog(
-            selectedLanguage = selectedLanguage,
-            languages = listOf("English", "Arabic"),
+        LanguageDialog(selectedLanguage = convertLanguage(currentAppLocale.toLanguageTags()),
+            languages = Languages.entries,
             onLanguageSelected = { language ->
-                selectedLanguage = language
+                AppCompatDelegate.setApplicationLocales(
+                    LocaleListCompat.forLanguageTags(language.code)
+                )
                 isLanguageDialogOpen = false
             },
-            onDismissRequest = { isLanguageDialogOpen = false }
-        )
+            onDismissRequest = { isLanguageDialogOpen = false })
     }
+
+
+
     Column(
         modifier = Modifier.padding(16.dp)
     ) {
@@ -108,12 +119,13 @@ fun SettingsScreen(
     }
 }
 
+
 @Composable
 private fun LanguageDialog(
     modifier: Modifier = Modifier,
-    selectedLanguage: String = "English",
-    languages: List<String> = listOf("English", "Arabic"),
-    onLanguageSelected: (String) -> Unit,
+    selectedLanguage: Languages,
+    languages: List<Languages>,
+    onLanguageSelected: (Languages) -> Unit,
     onDismissRequest: () -> Unit
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
@@ -141,10 +153,9 @@ private fun LanguageDialog(
                                 onLanguageSelected(language)
                             }
                             .fillMaxWidth()
-                            .padding(horizontal = 8.dp, vertical = 4.dp)
-                    ) {
+                            .padding(horizontal = 8.dp, vertical = 4.dp)) {
                         Text(
-                            language,
+                            stringResource(id = language.language),
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 18.sp,
                             color = PrimaryColor
@@ -173,12 +184,4 @@ private fun LanguageDialog(
             }
         }
     }
-}
-
-@Preview(showBackground = true, showSystemUi = true, device = Devices.PIXEL_4)
-@Composable
-fun LanguageDialogPreview() {
-    LanguageDialog(languages = listOf("English", "Arabic"),
-        onLanguageSelected = {},
-        onDismissRequest = {})
 }
